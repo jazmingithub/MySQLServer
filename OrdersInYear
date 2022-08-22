@@ -1,0 +1,53 @@
+SELECT * FROM vCategories; 
+go
+SELECT * FROM vProducts;; 
+go 
+SELECT * FROM vOrders; 
+go
+SELECT * FROM vOrderDetails; 
+go
+
+-- Oders by year
+SELECT 
+	OrderID, 
+	OrderDate
+FROM vOrders
+WHERE YEAR(OrderDate) = 1996
+
+-- Functions make the select of statment resuable with different inputs 
+CREATE FUNCTION OrdersInYear 
+(
+	@OrderYear INT
+)
+RETURNS TABLE 
+AS  
+	RETURN
+		SELECT 
+			OrderID, 
+			OrderDate
+		FROM vOrders
+		WHERE YEAR(OrderDate) = @OrderYear
+go
+
+SELECT * FROM dbo.OrdersInYear(1998)
+go
+SELECT * FROM vOrders
+go
+ALTER FUNCTION OrdersInYear 
+(
+	@OrderYear INT,
+	@ShippedYear INT 
+)
+RETURNS TABLE 
+AS  
+	RETURN
+		SELECT 
+			OrderID, 
+			OrderDate, 
+			ShippedDate
+		FROM vOrders
+		WHERE YEAR(RequiredDate) BETWEEN @OrderYear AND @ShippedYear
+go
+
+SELECT *FROM dbo.OrdersInYear(1996, 1998)
+go
